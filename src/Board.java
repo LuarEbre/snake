@@ -8,6 +8,7 @@ public class Board {
     Snake snake;
     Food food;
 
+    // toString-like method for debugging
     public void printCells() {
 
         String reset = "\u001b[0m";
@@ -43,7 +44,7 @@ public class Board {
         if (p.x >= 0 && p.x < width && p.y >= 0 && p.y < height) {
             return this.cells[p.x][p.y].type;
         }
-        else return CellType.EMPTY;
+        else return CellType.WALL;
     }
 
     public Board(int w, int h) {

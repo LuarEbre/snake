@@ -1,9 +1,14 @@
+import java.util.concurrent.TimeUnit;
+
 class SnakeGame {
     public static void main(String args[]) {
-        Board gameBoard = new Board(30,20);
+
+        Board gameBoard = new Board(10,5);
         gameBoard.printCells();
-        gameBoard.food.moveFood();
-        System.out.println("Food has been moved!");
-        gameBoard.printCells();
+
+        while(gameBoard.snake.move()) {
+            System.out.println("Snake has moved!");
+            gameBoard.printCells();
+        }
+        }
     }
-}

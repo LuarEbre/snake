@@ -50,8 +50,14 @@ public class Snake {
 
         // if snake collides with itself or a wall
         else if (nextCell==CellType.SNAKE||nextCell==CellType.WALL) {
+            // see if collision is the tail of the snake
+            if(board.snake.body.getLast().equals(newHead)) {
+                body.removeLast();
+                body.addFirst(newHead);
+                return true;
+            }
             // GAME OVER
-            return false;
+            else return false;
         }
 
         // if snake does not collide with anything

@@ -2,8 +2,8 @@ import java.awt.*;
 
 public class Util {
     public static Point generateRandomPoint(int width, int height) {
-        int randomX = 1 + (int)(Math.random() * (width - 1));
-        int randomY = 1 + (int)(Math.random() * (height - 1));
+        int randomX = 1 + (int) (Math.random() * (width - 2));
+        int randomY = 1 + (int) (Math.random() * (height - 2));
         return new Point(randomX, randomY);
     }
 
@@ -14,6 +14,6 @@ public class Util {
 
     public static Point shiftY(Point point, int n) {
         int newY = point.y + n;
-        return new Point(point.x,newY);
+        return new Point(point.x, newY);
     }
 }

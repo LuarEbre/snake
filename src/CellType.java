@@ -1,3 +1,3 @@
 public enum CellType {
-    EMPTY, FOOD, SNAKE;
+    EMPTY, FOOD, SNAKE, WALL;
 }

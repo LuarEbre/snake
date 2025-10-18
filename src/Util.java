@@ -6,4 +6,14 @@ public class Util {
         int randomY = 1 + (int)(Math.random() * (height - 1));
         return new Point(randomX, randomY);
     }
+
+    public static Point shiftX(Point point, int n) {
+        int newX = point.x + n;
+        return new Point(newX, point.y);
+    }
+
+    public static Point shiftY(Point point, int n) {
+        int newY = point.y + n;
+        return new Point(point.x,newY);
+    }
 }

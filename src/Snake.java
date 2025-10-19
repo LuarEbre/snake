@@ -48,7 +48,7 @@ public class Snake {
             board.food.moveFood();
         }
 
-        // if snake collides with itself or a wall
+        // if snake collides with itself or a wall (wall assigned to out-of-bounds coordinates)
         else if (nextCell==CellType.SNAKE||nextCell==CellType.WALL) {
             // see if collision is the tail of the snake
             if(board.snake.body.getLast().equals(newHead)) {

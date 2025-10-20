@@ -57,9 +57,7 @@ public class Board {
                 cells[i][j] = new Cell();
             }
         }
-
         snake = new Snake(this);
         food = new Food(this);
-
     }
 }

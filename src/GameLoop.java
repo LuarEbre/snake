@@ -1,4 +1,5 @@
 import javax.swing.Timer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,9 +24,9 @@ public class GameLoop implements ActionListener {
 
     public void start() {
         this.running = true;
+        actionPerformed(null);
         // Trigger the first actionPerformed (move and repaint) immediately,
         // which draws the initial state before the timer delay.
-        actionPerformed(null);
         timer.start();
     }
 
@@ -35,6 +36,7 @@ public class GameLoop implements ActionListener {
             timer.stop();
             return;
         }
+        gameBoard.printCells();
         boolean continueGame = gameBoard.snake.move();
 
         if(!continueGame) {

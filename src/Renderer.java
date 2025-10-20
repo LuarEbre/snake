@@ -1,8 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.security.Key;
+import javax.swing.SwingUtilities;
 
-public class Renderer extends JFrame {
+public class Renderer extends JFrame implements KeyListener {
     private int tileSize;
     private int width;
     private int height;
@@ -25,6 +29,39 @@ public class Renderer extends JFrame {
 
     public int getHeight() {
         return height;
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Not used
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Not used for directional input
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // The Renderer has access to the Board, which has the Snake instance
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
+                gameBoard.snake.changeDirection(Direction.NORTH);
+                break;
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
+                gameBoard.snake.changeDirection(Direction.SOUTH);
+                break;
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
+                gameBoard.snake.changeDirection(Direction.WEST);
+                break;
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
+                gameBoard.snake.changeDirection(Direction.EAST);
+                break;
+        }
     }
 
     public Renderer(int width, int height, Board gameBoard) {
@@ -60,8 +97,11 @@ public class Renderer extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        this.addKeyListener(this);
+        this.setFocusable(true);
+        this.requestFocusInWindow();
 
-        gamePanel.paintComponent(getGraphics());
+        repaintGame();
     }
 
     private class GamePanel extends JPanel {

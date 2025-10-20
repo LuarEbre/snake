@@ -18,13 +18,14 @@ public class GameLoop implements ActionListener {
         this.gameBoard = new Board(width, height);
         this.renderer = new Renderer(width, height, gameBoard);
         this.timer = new Timer(tickMS, this);
-        while(this.gameBoard.snake.move()) {
-            renderer.repaintGame();
-        }
+        // CRITICAL: Ensure the blocking while-loop is GONE here.
     }
 
     public void start() {
         this.running = true;
+        // Trigger the first actionPerformed (move and repaint) immediately,
+        // which draws the initial state before the timer delay.
+        actionPerformed(null);
         timer.start();
     }
 

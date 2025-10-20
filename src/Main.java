@@ -4,7 +4,7 @@ import javax.swing.SwingUtilities; // <<< ADD THIS IMPORT
 
 class SnakeGame {
     public static void main(String args[]) {
-
+        //
         final int width = 16;
         final int height = 16;
 

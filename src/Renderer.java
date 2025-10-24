@@ -13,6 +13,7 @@ public class Renderer extends JFrame implements KeyListener {
 
     private ImageLoader images;
     private GamePanel gamePanel;
+    private GameLoop loop;
     private Board gameBoard;
 
     public void repaintGame() {
@@ -29,6 +30,14 @@ public class Renderer extends JFrame implements KeyListener {
 
     public int getHeight() {
         return height;
+    }
+
+    public JPanel getPanel() {
+        return gamePanel;
+    }
+
+    public void setGameBoard(Board gameBoard) {
+        this.gameBoard = gameBoard;
     }
 
     @Override
@@ -61,24 +70,27 @@ public class Renderer extends JFrame implements KeyListener {
             case KeyEvent.VK_D:
                 gameBoard.snake.changeDirection(Direction.EAST);
                 break;
+            case KeyEvent.VK_R:
+                if(!(loop.isRunning())) {
+                    loop.restartGame();
+                }
         }
     }
 
-    public Renderer(int width, int height, Board gameBoard) {
+    public Renderer(int width, int height, GameLoop loop) {
 
         this.width = width;
         this.height = height;
-        this.gameBoard = gameBoard;
-
-        // start ImageLoader so Renderer has access to images via Renderer.images.XXXX
+        this.loop = loop;
+        this.gameBoard = loop.getGameBoard();
+        // start ImageLoader so Renderer has access to images via "this.images.XXXX"
         this.images = new ImageLoader();
 
         // Get the resolution of the main display
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenHeight = (int)(0.9*screenSize.height);
+        int screenHeight = screenSize.height;
 
         // adapt tileSize according to Y of User resolution
-        // e.g. for 25x25 at 2560x1440 -> (0.9*1440)/25 = 57
         tileSize = screenHeight / height;
 
         // rounds down to nearest number divisible by 16 for 16x16 texture
@@ -87,19 +99,19 @@ public class Renderer extends JFrame implements KeyListener {
 
         this.setTitle("Worm Game");
         this.setPreferredSize(new Dimension((tileSize*width)+tileSize*2, (tileSize*height)+tileSize*2));
-        this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gamePanel = new GamePanel();
         gamePanel.setPreferredSize(new Dimension((tileSize*width)+tileSize*2, (tileSize*height)+tileSize*2));
         this.add(gamePanel);
 
+        this.setResizable(false);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
         this.addKeyListener(this);
         this.setFocusable(true);
         this.requestFocusInWindow();
+        this.setVisible(true);
     }
 
     private class GamePanel extends JPanel {
@@ -107,11 +119,8 @@ public class Renderer extends JFrame implements KeyListener {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
             Graphics2D g2d = (Graphics2D) g;
-
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(0, 0, getWidth(), getHeight());
-
             BufferedImage tileImage;
 
             final int RIGHT_EDGE = width-1;

@@ -16,6 +16,7 @@ public class Snake {
 
     public void changeDirection(Direction direction) {
         Direction opposite = getOppositeDirection(this.direction);
+        // bug: when already moved in a different direction, snake can afterward turn into itself during the same frame
         if(direction != opposite) {
             this.direction = direction;
         }
@@ -34,9 +35,10 @@ public class Snake {
         else if (direction == Direction.EAST) {
             newHead = Util.shiftX(body.getFirst(),1);
         }
-        else {
+        else if (direction == Direction.WEST) {
             newHead = Util.shiftX(body.getFirst(),-1);
         }
+        else newHead = Util.shiftX(body.getFirst(),0);
 
         // singular lookup of next cell type
         CellType nextCell = board.getCellType(newHead);
@@ -78,6 +80,6 @@ public class Snake {
         Point startPos = Util.generateRandomPoint(board.getWidth(),board.getHeight());
         body.add(startPos);
         board.changeCell(startPos.x,startPos.y,CellType.SNAKE);
-        direction = Direction.EAST;
+        direction = Direction.NONE;
     }
 }

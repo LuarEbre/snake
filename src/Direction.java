@@ -1,4 +1,4 @@
 public enum Direction {
-    NORTH, SOUTH, EAST, WEST;
+    // snake starts with NONE and waits for user input (W,A,S,D,↑,←,↓,→)
+    NORTH, SOUTH, EAST, WEST, NONE;
 }
-

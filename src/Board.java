@@ -8,7 +8,7 @@ public class Board {
     Snake snake;
     Food food;
 
-    // toString-like method for debugging
+    // toString-like method for debugging purposes
     public void printCells() {
 
         String reset = "\u001b[0m";
@@ -21,11 +21,15 @@ public class Board {
                     System.out.print(green + "SNAKE " + reset);
                 else if(cells[j][i].type==CellType.FOOD)
                     System.out.print(red + "FOOD  " + reset);
+                else if(cells[j][i].type==CellType.WALL)
+                    // should not happen as WALL is currently not implemented
+                    System.out.print(green + "WALL  " + reset);
                 else
                     System.out.print("EMPTY ");
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public int getWidth() {
@@ -50,6 +54,7 @@ public class Board {
     public Board(int w, int h) {
         this.width = w;
         this.height = h;
+        // new width x height 2D array of cells
         cells = new Cell[w][h];
 
         for(int i=0;i<w;i++) {
@@ -57,6 +62,7 @@ public class Board {
                 cells[i][j] = new Cell();
             }
         }
+
         snake = new Snake(this);
         food = new Food(this);
     }

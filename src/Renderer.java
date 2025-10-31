@@ -3,8 +3,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.security.Key;
-import javax.swing.SwingUtilities;
 
 public class Renderer extends JFrame implements KeyListener {
     private int tileSize;
@@ -15,9 +13,18 @@ public class Renderer extends JFrame implements KeyListener {
     private GamePanel gamePanel;
     private GameLoop loop;
     private Board gameBoard;
+    private JLabel text;
 
     public void repaintGame() {
-        gamePanel.repaint();
+        // Forces the GamePanel to draw its content immediately.
+        // This is often necessary in fast-paced game loops
+        // where asynchronous repaint() is too slow or gets coalesced.
+        gamePanel.paintImmediately(
+                0,
+                0,
+                gamePanel.getWidth(),
+                gamePanel.getHeight()
+        );
     }
 
     public int getTileSize() {
@@ -34,6 +41,10 @@ public class Renderer extends JFrame implements KeyListener {
 
     public JPanel getPanel() {
         return gamePanel;
+    }
+
+    public JLabel getLabel() {
+        return text;
     }
 
     public void setGameBoard(Board gameBoard) {
@@ -71,7 +82,7 @@ public class Renderer extends JFrame implements KeyListener {
                 gameBoard.snake.changeDirection(Direction.EAST);
                 break;
             case KeyEvent.VK_R:
-                if(!(loop.isRunning())) {
+                if (!(loop.isRunning())) {
                     loop.restartGame();
                 }
         }
@@ -82,6 +93,10 @@ public class Renderer extends JFrame implements KeyListener {
         this.width = width;
         this.height = height;
         this.loop = loop;
+
+        this.text = new JLabel("Score: 0");
+        text.setFont(new Font("Segoe UI", Font.BOLD, 16));
+
         this.gameBoard = loop.getGameBoard();
         // start ImageLoader so Renderer has access to images via "this.images.XXXX"
         this.images = new ImageLoader();
@@ -94,17 +109,23 @@ public class Renderer extends JFrame implements KeyListener {
         tileSize = screenHeight / height;
 
         // rounds down to nearest number divisible by 16 for 16x16 texture
-        int scale = Math.max((tileSize /16),1);
-        tileSize = scale*16;
+        int scale = Math.max((tileSize / 16), 1);
+        tileSize = scale * 16;
 
         this.setTitle("Worm Game");
-        this.setPreferredSize(new Dimension((tileSize*width)+tileSize*2, (tileSize*height)+tileSize*2));
+        this.setPreferredSize(new Dimension((tileSize * width) + tileSize * 2, (tileSize * height) + tileSize * 2));
 
         gamePanel = new GamePanel();
-        gamePanel.setPreferredSize(new Dimension((tileSize*width)+tileSize*2, (tileSize*height)+tileSize*2));
+        gamePanel.setPreferredSize(new Dimension((tileSize * width) + tileSize * 2, (tileSize * height) + tileSize * 2));
+        gamePanel.add(text);
+        this.gamePanel.setVisible(true);
         this.add(gamePanel);
 
+
         this.setResizable(false);
+        text.setSize(this.getPreferredSize());
+        text.setLocation(tileSize, tileSize);
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         this.setLocationRelativeTo(null);
@@ -121,18 +142,18 @@ public class Renderer extends JFrame implements KeyListener {
             super.paintComponent(g);
 
             Graphics2D g2d = (Graphics2D) g;
-            BufferedImage tileImage;
+            BufferedImage tileImage = null;
 
-            final int RIGHT_EDGE = width-1;
-            final int BOTTOM_EDGE = height-1;
+            final int RIGHT_EDGE = width - 1;
+            final int BOTTOM_EDGE = height - 1;
 
             for (int y = -1; y <= height; y++) {
-                for(int x = -1; x <= width; x++) {
+                for (int x = -1; x <= width; x++) {
 
-                    int pixelX = x*tileSize+tileSize;
-                    int pixelY = y*tileSize+tileSize;
+                    int pixelX = x * tileSize + tileSize;
+                    int pixelY = y * tileSize + tileSize;
 
-                    CellType cellType = gameBoard.getCellType(new Point(x,y));
+                    CellType cellType = gameBoard.getCellType(new Point(x, y));
 
                     // check for food
                     if (cellType == CellType.FOOD) {
@@ -146,36 +167,29 @@ public class Renderer extends JFrame implements KeyListener {
                     }
 
                     // check for padding tiles
-                    else if (y==-1) tileImage = Renderer.this.images.sky;
-                    else if (x==-1) tileImage = Renderer.this.images.gravel;
-                    else if (y==BOTTOM_EDGE+1) tileImage = Renderer.this.images.gravel;
-                    else if (x==RIGHT_EDGE+1) tileImage = Renderer.this.images.gravel;
+                    else if (y == -1) tileImage = Renderer.this.images.sky;
+                    else if (x == -1) tileImage = Renderer.this.images.gravel;
+                    else if (y == BOTTOM_EDGE + 1) tileImage = Renderer.this.images.gravel;
+                    else if (x == RIGHT_EDGE + 1) tileImage = Renderer.this.images.gravel;
 
-                    // check for special dirt cases
+                        // check for special dirt cases
 
-                    // check for corners / edges
+                        // check for corners / edges
                     else if (x == 0 && y == 0) {
                         tileImage = images.grassLeft;      // Top-Left
-                    }
-                    else if (x == RIGHT_EDGE && y == 0) {
+                    } else if (x == RIGHT_EDGE && y == 0) {
                         tileImage = images.grassRight;     // Top-Right
-                    }
-                    else if (x == 0 && y == BOTTOM_EDGE) {
+                    } else if (x == 0 && y == BOTTOM_EDGE) {
                         tileImage = images.dirtBottomLeft; // Bottom-Left
-                    }
-                    else if (x == RIGHT_EDGE && y == BOTTOM_EDGE) {
+                    } else if (x == RIGHT_EDGE && y == BOTTOM_EDGE) {
                         tileImage = images.dirtBottomRight; // Bottom-Right
-                    }
-                    else if (y == 0) {
+                    } else if (y == 0) {
                         tileImage = images.grass;          // Top Edge
-                    }
-                    else if (y == BOTTOM_EDGE) {
+                    } else if (y == BOTTOM_EDGE) {
                         tileImage = images.dirtBottom;     // Bottom Edge
-                    }
-                    else if (x == 0) {
+                    } else if (x == 0) {
                         tileImage = images.dirtLeft;       // Left Edge
-                    }
-                    else if (x == RIGHT_EDGE) {
+                    } else if (x == RIGHT_EDGE) {
                         tileImage = images.dirtRight;      // Right Edge
                     }
                     // default case
@@ -183,15 +197,17 @@ public class Renderer extends JFrame implements KeyListener {
                         tileImage = images.dirt;           // Inner Tiles
                     }
 
-                    g2d.drawImage(
-                            tileImage,         // The determined image for this tile
-                            pixelX,            // X position
-                            pixelY,            // Y position
-                            tileSize,          // Width (scaled)
-                            tileSize,          // Height (scaled)
-                            this               // ImageObserver
-                    );
+                    if (tileImage != null) {
+                        g2d.drawImage(
+                                tileImage,         // The determined image for this tile
+                                pixelX,            // X position
+                                pixelY,            // Y position
+                                tileSize,          // Width (scaled)
+                                tileSize,          // Height (scaled)
+                                this               // ImageObserver
+                        );
 
+                    }
                 }
             }
         }

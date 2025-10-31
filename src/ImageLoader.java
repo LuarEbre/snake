@@ -35,9 +35,10 @@ public class ImageLoader {
             food = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Resources/mushroom.jpeg")));
             worm = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Resources/worm.jpeg")));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Exit if essential images fail to load
             System.err.println("Error loading image file: " + e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
     }

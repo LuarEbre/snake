@@ -12,7 +12,7 @@ public class GameLoop implements ActionListener {
     private Renderer renderer;
     private Board gameBoard;
     private Timer timer;
-    private Graphics2D graphics;
+    private Graphics graphics;
     private int score;
     private int highScore = 0;
     private boolean running = false;
@@ -40,7 +40,7 @@ public class GameLoop implements ActionListener {
         this.timer = new Timer(tickMS, this);
         this.gameBoard = new Board(width, height);
         this.renderer = new Renderer(width, height, this);
-        renderer.repaintGame();
+        this.graphics = renderer.getGraphics();
     }
 
     public boolean isRunning() {
@@ -68,11 +68,11 @@ public class GameLoop implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        renderer.paintComponents(renderer.getGraphics());
         if(!running) {
             timer.stop();
             return;
         }
+        renderer.repaintGame();
         gameBoard.printCells();
 
         boolean continueGame = gameBoard.snake.move();
@@ -91,6 +91,8 @@ public class GameLoop implements ActionListener {
             this.writer.close();
         }
 
+        this.renderer.getLabel().setText("<html>Score:    " + this.score + "<br>" + "Highscore:" + this.highScore + "</html>");
+
         System.out.println("Current score: " + this.score);
         System.out.println("Highscore: " + this.highScore);
 
@@ -98,6 +100,5 @@ public class GameLoop implements ActionListener {
             running = false;
             // GAME OVER screen
         }
-
     }
 }

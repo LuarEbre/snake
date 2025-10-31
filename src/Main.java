@@ -6,7 +6,7 @@ class SnakeGame {
 
         final int width = 16;
         final int height = 16;
-        final int tickMS = 140;
+        final int tickMS = 130;
 
         GameLoop loop = new GameLoop(width, height, tickMS);
         loop.runGame();
